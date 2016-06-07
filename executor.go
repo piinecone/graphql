@@ -8,6 +8,7 @@ import (
 
 	"github.com/graphql-go/graphql/gqlerrors"
 	"github.com/graphql-go/graphql/language/ast"
+	"github.com/kylelemons/godebug/pretty"
 	"golang.org/x/net/context"
 )
 
@@ -397,10 +398,10 @@ func doesFragmentConditionMatch(eCtx *ExecutionContext, fragment ast.Node, ttype
 		if conditionalType == ttype {
 			return true
 		}
-                if conditionalType.Name() == ttype.Name() {
+		if conditionalType.Name() == ttype.Name() {
 			return true
 		}
-		
+
 		if conditionalType, ok := conditionalType.(Abstract); ok {
 			return conditionalType.IsPossibleType(ttype)
 		}
@@ -650,7 +651,8 @@ func completeValue(eCtx *ExecutionContext, returnType Type, fieldASTs []*ast.Fie
 	// than continuing execution.
 	if objectType.IsTypeOf != nil && !objectType.IsTypeOf(result, info) {
 		panic(gqlerrors.NewFormattedError(
-			fmt.Sprintf(`Expected value of type "%v" but got: %T.`, objectType, result),
+			// fmt.Sprintf(`Expected value of type "%v" but got: %T.`, objectType, result),
+			pretty.Compare(result, objectType),
 		))
 	}
 
